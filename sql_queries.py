@@ -94,7 +94,7 @@ artist_table_create = ("""create table if not exists artist
                         artist_id   varchar,
                         name        varchar,
                         location    varchar,
-                        latitude   decimal,
+                        latitude    decimal,
                         longitude   decimal
                     );
 """)
@@ -131,7 +131,7 @@ staging_songs_copy = ("""
 
 songplay_table_insert = ("""INSERT INTO songplay(songplay_id, start_time, user_id, level, song_id, artist_id, session_id, location, user_agent)
                             SELECT  e.song_id,
-                                    e.ts,
+                                    e.XXXXXXXXXXXXXXXXXXXXXXXXX,
                                     e.userId,
                                     e.level,
                                     s.song_id,
@@ -144,34 +144,34 @@ songplay_table_insert = ("""INSERT INTO songplay(songplay_id, start_time, user_i
 """)
 
 user_table_insert = ("""INSERT INTO user(user_id, first_name, last_name, gender, level)
-                        SELECT  userId,
-                                firstName,
-                                lastName,
-                                gender,
-                                level
-                        FROM    staging_events
+                        SELECT DISTINCT (userId),
+                                        firstName,
+                                        lastName,
+                                        gender,
+                                        level
+                        FROM            staging_events
 """)
 
 song_table_insert = ("""INSERT INTO song(song_id, title, artist_id, year, duration)
-                        SELECT  song_id,
-                                title,
-                                artist_id,
-                                year,
-                                duration
-                        FROM    staging_songs
+                        SELECT DISTINCT     (song_id),
+                                            title,
+                                            artist_id,
+                                            year,
+                                            duration
+                        FROM                staging_songs
 """)
 
 artist_table_insert = ("""INSERT INTO artist(artist_id, name, location, latitude, longitude)
-                          SELECT    artist_id,
-                                    artist_name,
-                                    artist_location,
-                                    artist_latitude,
-                                    artist_longitude
-                          FROM      staging_songs
+                            SELECT DISTINCT     (artist_id),
+                                                artist_name,
+                                                artist_location,
+                                                artist_latitude,
+                                                artist_longitude
+                            FROM                staging_songs
 """)
 
 time_table_insert = ("""INSERT INTO time(start_time, hour, day, week, month, year, weekday)
-                        SELECT 
+                        SELECT XXXXXXXXXXXXXX
                         FROM 
                         JOIN     ON
 """)
