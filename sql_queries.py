@@ -44,7 +44,7 @@ staging_songs_table_create = ("""create table if not exists staging_songs
                              (
                                 num_songs           integer,
                                 artist_id           varchar,
-                                artist_latitude    integer,
+                                artist_latitude     integer,
                                 artist_longitude    integer,
                                 artist_location     varchar,
                                 artist_name         varchar,
