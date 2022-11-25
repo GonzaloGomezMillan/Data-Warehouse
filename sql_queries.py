@@ -5,6 +5,12 @@ import configparser
 config = configparser.ConfigParser()
 config.read('dwh.cfg')
 
+LOG_DATA = config['S3']['LOG_DATA']
+LOG_JSON_PATH = config['S3']['LOG_JSONPATH']
+SONG_DATA = config['S3']['SONG_DATA']
+ARN = config['IAM_ROLE']['ARN']
+REGION = config['S3']['REGION']
+
 # DROP TABLES
 
 staging_events_table_drop = "DROP TABLE IF EXISTS staging_events"
@@ -57,7 +63,7 @@ staging_songs_table_create = ("""create table if not exists staging_songs
 
 songplay_table_create = ("""create table if not exists songplays
                         (
-                            songplay_id       varchar,
+                            songplay_id       varchar NOT NULL, 
                             start_time        bigint,
                             user_id           int,
                             level             varchar,
@@ -71,7 +77,7 @@ songplay_table_create = ("""create table if not exists songplays
 
 user_table_create = ("""create table if not exists user
                     (
-                        user_id     int,
+                        user_id     int NOT NULL,
                         first_name  varchar,
                         last_name   varchar,
                         gender      varchar,
@@ -81,7 +87,7 @@ user_table_create = ("""create table if not exists user
 
 song_table_create = ("""create table if not exists song
                     (
-                        song_id     varchar,
+                        song_id     varchar NOT NULL,
                         title       varchar,
                         artist_id   varchar,
                         year        int,
@@ -91,7 +97,7 @@ song_table_create = ("""create table if not exists song
 
 artist_table_create = ("""create table if not exists artist
                     (
-                        artist_id   varchar,
+                        artist_id   varchar NOT NULL,
                         name        varchar,
                         location    varchar,
                         latitude    decimal,
@@ -101,7 +107,7 @@ artist_table_create = ("""create table if not exists artist
 
 time_table_create = ("""create table if not exists time
                     (
-                        start_time  time,
+                        start_time  timestamp NOT NULL,
                         hour        integer,
                         day         integer,
                         week        integer,
