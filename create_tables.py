@@ -4,18 +4,28 @@ from sql_queries import create_table_queries, drop_table_queries
 
 
 def drop_tables(cur, conn):
+    '''
+    This funtion deletes tables which already exists, so we can create new tables.
+    '''
     for query in drop_table_queries:
         cur.execute(query)
         conn.commit()
 
 
 def create_tables(cur, conn):
+    '''
+    This function creates tables based on the queries defined in sql_queries.py. 
+    '''
     for query in create_table_queries:
         cur.execute(query)
         conn.commit()
 
 
 def main():
+    '''
+    This is the function which set the connection with Redshift and uses the drop_tables function to eliminate already existing tables and 
+    create_tables to create new ones.
+    '''
     config = configparser.ConfigParser()
     config.read('dwh.cfg')
 
