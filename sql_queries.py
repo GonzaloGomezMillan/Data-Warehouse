@@ -9,7 +9,7 @@ LOG_DATA = config['S3']['LOG_DATA']
 LOG_JSON_PATH = config['S3']['LOG_JSONPATH']
 SONG_DATA = config['S3']['SONG_DATA']
 ARN = config['IAM_ROLE']['ARN']
-REGION = config['S3']['REGION']
+# REGION = config['S3']['REGION']
 
 # DROP TABLES
 
@@ -23,97 +23,98 @@ time_table_drop = "DROP TABLE IF EXISTS time"
 
 # CREATE TABLES
 
-staging_events_table_create= ("""create table if not exists staging_events
+staging_events_table_create= ("""CREATE TABLE IF NOT EXISTS staging_events
                              (
-                                artist          varchar,
-                                auth            varchar,
-                                firstName       varchar,
-                                gender          varchar,
-                                iteminSession   integer,
-                                lastName        varchar,
-                                length          decimal,
-                                level           varchar,
-                                location        varchar,
-                                method          varchar,
-                                page            varchar,
-                                registration    integer,
-                                sessionId       integer,
-                                song            varchar,
-                                status          integer,
-                                ts              integer,
-                                userAgent       varchar,
-                                userId          integer
+                                event_id        BIGINT IDENTITY(0,1),
+                                artist          VARCHAR,
+                                auth            VARCHAR,
+                                firstName       VARCHAR,
+                                gender          VARCHAR,
+                                iteminSession   VARCHAR,
+                                lastName        VARCHAR,
+                                length          VARCHAR,
+                                level           VARCHAR,
+                                location        VARCHAR,
+                                method          VARCHAR,
+                                page            VARCHAR,
+                                registration    VARCHAR,
+                                sessionId       VARCHAR SORTKEY DISTKEY,
+                                song            VARCHAR,
+                                status          INTEGER,
+                                ts              TIMESTAMP,
+                                userAgent       VARCHAR,
+                                userId          INTEGER
                              )
 """)
 
-staging_songs_table_create = ("""create table if not exists staging_songs
+staging_songs_table_create = ("""CREATE TABLE IF NOT EXISTS staging_songs
                              (
-                                num_songs           integer,
-                                artist_id           varchar,
-                                artist_latitude     integer,
-                                artist_longitude    integer,
-                                artist_location     varchar,
-                                artist_name         varchar,
-                                song_id             varchar,
-                                title               varchar,
-                                duration            decimal,
-                                year                integer
+                                num_songs           INTEGER,
+                                artist_id           VARCHAR,
+                                artist_latitude     VARCHAR,
+                                artist_longitude    VARCHAR,
+                                artist_location     VARCHAR,
+                                artist_name         VARCHAR,
+                                song_id             VARCHAR,
+                                title               VARCHAR,
+                                duration            DECIMAL,
+                                year                INTEGER
                              );
 """)
 
-songplay_table_create = ("""create table if not exists songplays
+songplay_table_create = ("""CREATE TABLE IF NOT EXISTS songplays
                         (
-                            songplay_id       varchar NOT NULL, 
-                            start_time        bigint,
-                            user_id           int,
-                            level             varchar,
-                            song_id           varchar,
-                            artist_id         varchar,
-                            session_id        int,
-                            location          varchar,
-                            user_agent        varchar
+                            songplay_id       INTEGER IDENTITY(0,1)     NOT NULL SORTKEY, 
+                            start_time        TIMESTAMP                 NOT NULL,
+                            user_id           VARCHAR                   NOT NULL DISTKEY,
+                            level             VARCHAR                   NOT NULL,
+                            song_id           VARCHAR                   NOT NULL,
+                            artist_id         VARCHAR                   NOT NULL,
+                            session_id        VARCHAR                   NOT NULL,
+                            location          VARCHAR,
+                            user_agent        VARCHAR
                         );
 """)
 
-user_table_create = ("""create table if not exists user
+user_table_create = ("""CREATE TABLE IF NOT EXISTS user
                     (
-                        user_id     int NOT NULL,
-                        first_name  varchar,
-                        last_name   varchar,
-                        gender      varchar,
-                        level       varchar
+                        user_id     INTEGER  NOT NULL   SORTKEY,
+                        first_name  VARCHAR  NULL,
+                        last_name   VARCHAR  NULL,
+                        gender      VARCHAR  NULL,
+                        level       VARCHAR  NULL
                     );
 """)
 
-song_table_create = ("""create table if not exists song
+song_table_create = ("""CREATE TABLE IF NOT EXISTS song
                     (
-                        song_id     varchar NOT NULL,
-                        title       varchar,
-                        artist_id   varchar,
-                        year        int,
-                        duration    float
+                        song_id     VARCHAR     NOT NULL SORTKEY,
+                        title       VARCHAR     NOT NULL,
+                        artist_id   VARCHAR     NOT NULL,
+                        year        INTEGER     NOT NULL,
+                        duration    DEDCIMAL    NOT NULL
                     );
 """)
 
-artist_table_create = ("""create table if not exists artist
+artist_table_create = ("""CREATE TABLE IF NOT EXISTS artist
                     (
-                        artist_id   varchar NOT NULL,
-                        name        varchar,
-                        location    varchar,
-                        latitude    decimal,
-                        longitude   decimal
+                        artist_id   VARCHAR     NOT NULL SORTKEY,
+                        name        VARCHAR     NOT NULL,
+                        location    VARCHAR     NOT NULL,
+                        latitude    DECIMAL     NOT NULL,
+                        longitude   DECIMAL     NOT NULL
                     );
 """)
 
-time_table_create = ("""create table if not exists time
+time_table_create = ("""CREATE TABLE IF NOT EXISTS time
                     (
-                        start_time  timestamp NOT NULL,
-                        hour        integer,
-                        day         integer,
-                        week        integer,
-                        month       integer,
-                        year        integer,
-                        weekday     integer
+                        start_time  TIMESTAMP   NOT NULL,
+                        hour        INTEGER     NOT NULL,
+                        day         INTEGER     NOT NULL,
+                        week        INTEGER     NOT NULL,
+                        month       INTEGER     NOT NULL,
+                        year        INTEGER     NOT NULL,
+                        weekday     INTEGER
                     );
 """)
 
@@ -131,7 +132,7 @@ staging_songs_copy = ("""
     credentials 'aws_iam_role={}'
     region 'us-west-2'
     json {};
-""").format(LOG_DATA, IAM_ROLE_ARN, )
+""").format(LOG_DATA, IAM_ROLE_ARN, REGION)
 
 # FINAL TABLES
 
