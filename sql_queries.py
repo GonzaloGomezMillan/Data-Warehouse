@@ -9,21 +9,20 @@ LOG_DATA = config['S3']['LOG_DATA']
 LOG_JSON_PATH = config['S3']['LOG_JSONPATH']
 SONG_DATA = config['S3']['SONG_DATA']
 ARN = config['IAM_ROLE']['ARN']
-# REGION = config['S3']['REGION']
 
 # DROP TABLES
 
 staging_events_table_drop = "DROP TABLE IF EXISTS staging_events"
 staging_songs_table_drop = "DROP TABLE IF EXISTS staging_songs"
 songplay_table_drop = "DROP TABLE IF EXISTS songplay"
-user_table_drop = "DROP TABLE IF EXISTS user"
+user_table_drop = "DROP TABLE IF EXISTS users"
 song_table_drop = "DROP TABLE IF EXISTS song"
 artist_table_drop = "DROP TABLE IF EXISTS artist"
 time_table_drop = "DROP TABLE IF EXISTS time"
 
 # CREATE TABLES
 
-staging_events_table_create= ("""CREATE TABLE IF NOT EXISTS staging_events
+staging_events_table_create= (""" CREATE TABLE IF NOT EXISTS staging_events
                              (
                                 event_id        BIGINT IDENTITY(0,1),
                                 artist          VARCHAR,
@@ -44,7 +43,7 @@ staging_events_table_create= ("""CREATE TABLE IF NOT EXISTS staging_events
                                 ts              TIMESTAMP,
                                 userAgent       VARCHAR,
                                 userId          INTEGER
-                             )
+                             );
 """)
 
 staging_songs_table_create = ("""CREATE TABLE IF NOT EXISTS staging_songs
@@ -76,7 +75,7 @@ songplay_table_create = ("""CREATE TABLE IF NOT EXISTS songplays
                         );
 """)
 
-user_table_create = ("""CREATE TABLE IF NOT EXISTS user
+user_table_create = ("""CREATE TABLE IF NOT EXISTS users
                     (
                         user_id     INTEGER  NOT NULL   SORTKEY,
                         first_name  VARCHAR  NULL,
@@ -92,7 +91,7 @@ song_table_create = ("""CREATE TABLE IF NOT EXISTS song
                         title       VARCHAR     NOT NULL,
                         artist_id   VARCHAR     NOT NULL,
                         year        INTEGER     NOT NULL,
-                        duration    DEDCIMAL    NOT NULL
+                        duration    DECIMAL    NOT NULL
                     );
 """)
 
@@ -121,21 +120,21 @@ time_table_create = ("""CREATE TABLE IF NOT EXISTS time
 # STAGING TABLES
 
 staging_events_copy = ("""
-    COPY    staging_events 
+        COPY    staging_events 
             FROM {}
-            iam_role '{}'
+            IAM_ROLE '{}'
             FORMAT AS JSON {}
-            region 'us-east-1'
+            REGION 'us-east-1'
             TIMEFORMAT AS 'epochmillisecs';
-""").format(LOG_DATA, IAM_ROLE_ARN, LOG_JSONPATH)
+""").format(LOG_DATA, ARN, LOG_JSON_PATH)
 
 staging_songs_copy = ("""
-    COPY    staging_songs 
+        COPY    staging_songs 
             FROM {}
-            iam_role '{}'
+            IAM_ROLE '{}'
             FORMAT AS JSON 'auto'
-            region 'us-east-1';
-""").format(LOG_DATA, IAM_ROLE_ARN)
+            REGION 'us-east-1';
+""").format(LOG_DATA, ARN)
 
 # FINAL TABLES
 
@@ -153,7 +152,7 @@ songplay_table_insert = ("""INSERT INTO songplay(start_time, user_id, level, son
                             WHERE   e.page = 'NextSong'
 """)
 
-user_table_insert = ("""INSERT INTO user(user_id, first_name, last_name, gender, level)
+user_table_insert = ("""INSERT INTO users(user_id, first_name, last_name, gender, level)
                         SELECT DISTINCT (userId)    AS user_id,
                                         firstName   AS first_name,
                                         lastName    AS last_name,
