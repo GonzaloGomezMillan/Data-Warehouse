@@ -8,6 +8,7 @@ def drop_tables(cur, conn):
     This funtion deletes tables which already exists, so we can create new tables.
     '''
     for query in drop_table_queries:
+        print(query)
         cur.execute(query)
         conn.commit()
 
@@ -17,6 +18,7 @@ def create_tables(cur, conn):
     This function creates tables based on the queries defined in sql_queries.py. 
     '''
     for query in create_table_queries:
+        print(query)
         cur.execute(query)
         conn.commit()
 
