@@ -122,16 +122,15 @@ time_table_create = ("""CREATE TABLE IF NOT EXISTS time
 staging_events_copy = ("""
         COPY    staging_events 
             FROM {}
-            IAM_ROLE '{}'
+            IAM_ROLE {}
             FORMAT AS JSON {}
             REGION 'us-east-1'
             TIMEFORMAT AS 'epochmillisecs';
 """).format(LOG_DATA, ARN, LOG_JSON_PATH)
-
 staging_songs_copy = ("""
         COPY    staging_songs 
             FROM {}
-            IAM_ROLE '{}'
+            IAM_ROLE {}
             FORMAT AS JSON 'auto'
             REGION 'us-east-1';
 """).format(LOG_DATA, ARN)
