@@ -37,8 +37,12 @@ def main():
     
     load_staging_tables(cur, conn)
     insert_tables(cur, conn)
+    
+    print('Code successfully run.')
 
     conn.close()
+    
+    print('Connection closed.')
 
 
 if __name__ == "__main__":
