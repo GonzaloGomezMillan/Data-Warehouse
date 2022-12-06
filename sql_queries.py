@@ -61,7 +61,7 @@ staging_songs_table_create = ("""CREATE TABLE IF NOT EXISTS staging_songs
                              );
 """)
 
-songplay_table_create = ("""CREATE TABLE IF NOT EXISTS songplays
+songplay_table_create = ("""CREATE TABLE IF NOT EXISTS songplay
                         (
                             songplay_id       INTEGER IDENTITY(0,1)     NOT NULL SORTKEY, 
                             start_time        TIMESTAMP                 NOT NULL,
@@ -124,7 +124,7 @@ staging_events_copy = ("""
             FROM {}
             IAM_ROLE {}
             FORMAT AS JSON {}
-            REGION 'us-east-1'
+            REGION 'us-west-2'
             TIMEFORMAT AS 'epochmillisecs';
 """).format(LOG_DATA, ARN, LOG_JSON_PATH)
 staging_songs_copy = ("""
@@ -132,7 +132,7 @@ staging_songs_copy = ("""
             FROM {}
             IAM_ROLE {}
             FORMAT AS JSON 'auto'
-            REGION 'us-east-1';
+            REGION 'us-west-2';
 """).format(LOG_DATA, ARN)
 
 # FINAL TABLES
@@ -158,6 +158,7 @@ user_table_insert = ("""INSERT INTO users(user_id, first_name, last_name, gender
                                         gender,
                                         level
                         FROM            staging_events
+                        WHERE           user_id IS NOT NULL
 """)
 
 song_table_insert = ("""INSERT INTO song(song_id, title, artist_id, year, duration)
@@ -167,6 +168,7 @@ song_table_insert = ("""INSERT INTO song(song_id, title, artist_id, year, durati
                                             year,
                                             duration
                         FROM                staging_songs
+                        WHERE               song_id IS NOT NULL
 """)
 
 artist_table_insert = ("""INSERT INTO artist(artist_id, name, location, latitude, longitude)
@@ -176,17 +178,18 @@ artist_table_insert = ("""INSERT INTO artist(artist_id, name, location, latitude
                                                 artist_latitude         AS latitude,
                                                 artist_longitude        AS longitude
                             FROM                staging_songs
+                            WHERE               artist_id IS NOT NULL
 """)
 
 time_table_insert = ("""INSERT INTO time(start_time, hour, day, week, month, year, weekday)
-                        SELECT DISTINCT     (e.ts) AS start_time,
+                        SELECT DISTINCT     (start_time) AS start_time,
                                             EXTRACT(hour FROM start_time) AS hour,
                                             EXTRACT(day FROM start_time) AS DAY,
                                             EXTRACT(week FROM start_time) AS week,
                                             EXTRACT(month FROM start_time) AS month,
                                             EXTRACT(year FROM start_time) AS year,
                                             EXTRACT(dayofweek FROM start_time) AS weekday                                       
-                        FROM                songplays;
+                        FROM                songplay;
 """)
 
 # QUERY LISTS
