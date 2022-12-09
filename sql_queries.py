@@ -169,8 +169,6 @@ song_table_insert = ("""INSERT INTO song(song_id, title, artist_id, year, durati
                                             duration
                         FROM                staging_songs
                         WHERE               song_id IS NOT NULL
-                        AND                 artist_id IS NOT NULL
-                        AND                 duration IS NOT NULL
 """)
 
 artist_table_insert = ("""INSERT INTO artist(artist_id, name, location, latitude, longitude)
