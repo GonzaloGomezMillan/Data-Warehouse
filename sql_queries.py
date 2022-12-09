@@ -133,7 +133,7 @@ staging_songs_copy = ("""
             IAM_ROLE {}
             FORMAT AS JSON 'auto'
             REGION 'us-west-2';
-""").format(LOG_DATA, ARN)
+""").format(SONG_DATA, ARN)
 
 # FINAL TABLES
 
@@ -178,7 +178,9 @@ artist_table_insert = ("""INSERT INTO artist(artist_id, name, location, latitude
                                                 artist_latitude         AS latitude,
                                                 artist_longitude        AS longitude
                             FROM                staging_songs
-                            WHERE               artist_id IS NOT NULL
+                            WHERE               artist_id IS NOT NULL 
+                            AND                 artist_latitude IS NOT NULL
+                            AND                 artist_location IS NOT NULL
 """)
 
 time_table_insert = ("""INSERT INTO time(start_time, hour, day, week, month, year, weekday)
